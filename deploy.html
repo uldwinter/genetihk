@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="CiteReady — аудит готовности сайта к AI Search, Google AI Overviews и answer engines.">
+  <meta property="og:title" content="CiteReady — AI Search Readiness Auditor">
+  <meta property="og:description" content="Технический и контентный аудит страниц для AI Overviews, AI Mode, ChatGPT и Perplexity.">
+  <title>CiteReady — AI Search Readiness Auditor</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/uldwinter/genetihk@citeready/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="https://cdn.jsdelivr.net/gh/uldwinter/genetihk@citeready/manifest.webmanifest">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/uldwinter/genetihk@citeready/styles.css">
+</head>
+<body>
+  <header class="topbar no-print">
+    <a class="brand" href="#"><img src="https://cdn.jsdelivr.net/gh/uldwinter/genetihk@citeready/favicon.svg" alt=""><span>CiteReady</span><em>AI SEARCH</em></a>
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="audit">Аудит</button>
+      <button class="nav-btn" data-tab="report">Отчёт</button>
+      <button class="nav-btn" data-tab="generators">Генераторы</button>
+      <button class="nav-btn" data-tab="projects">Проекты</button>
+      <button class="nav-btn" data-tab="settings">Брендинг</button>
+    </nav>
+    <div class="header-actions"><button class="button ghost" id="loadDemo">Демо</button><button class="button primary" id="runAudit">Запустить аудит</button></div>
+  </header>
+
+  <main>
+    <section class="hero no-print">
+      <div>
+        <span class="eyebrow">AI Search Readiness Auditor</span>
+        <h1>Подготовьте сайт<br>к поиску без кликов.</h1>
+        <p>Проверьте, насколько страницу легко понять, процитировать и использовать в Google AI Overviews, AI Mode, ChatGPT и Perplexity. Без платных API и передачи данных на сервер.</p>
+        <div class="chips"><span>HTML-аудит</span><span>AI readiness score</span><span>FAQ Schema</span><span>llms.txt</span><span>White label</span></div>
+      </div>
+      <aside class="hero-score">
+        <span>Текущий AI-readiness</span>
+        <strong id="heroScore">—</strong>
+        <small id="heroVerdict">Загрузите HTML или используйте демо</small>
+      </aside>
+    </section>
+
+    <section class="tab-panel active" id="tab-audit">
+      <div class="layout">
+        <section class="panel input-panel no-print">
+          <div class="panel-head"><div><span class="step">01</span><h2>Источник страницы</h2></div><button class="text-button" id="clearInput">Очистить</button></div>
+          <label>Название проекта<input id="projectName" value="Новый аудит"></label>
+          <label>URL страницы<input id="pageUrl" placeholder="https://example.com/service"></label>
+          <div class="source-switch"><button class="source-btn active" data-source="html">HTML-код</button><button class="source-btn" data-source="text">Текст страницы</button></div>
+          <label id="htmlLabel">HTML страницы<textarea id="pageInput" rows="18" placeholder="Вставьте исходный HTML или загрузите .html файл"></textarea></label>
+          <div class="upload-row"><label class="upload">Загрузить HTML<input id="fileInput" type="file" accept=".html,.htm,text/html" hidden></label><span id="fileStatus">Файл не выбран</span></div>
+          <div class="privacy-note">Анализ выполняется локально в браузере. HTML и отчёты не отправляются на внешний сервер.</div>
+        </section>
+
+        <aside class="panel quick-result">
+          <div class="panel-head"><div><span class="step">02</span><h2>Сводка</h2></div><span class="live">LOCAL</span></div>
+          <div class="score-ring" id="scoreRing"><div><strong id="scoreValue">—</strong><span>из 100</span></div></div>
+          <h3 id="verdict">Аудит ещё не выполнен</h3>
+          <p id="verdictText" class="muted">CiteReady проверит техническую доступность, структуру, ответность, доверие и свежесть.</p>
+          <div class="mini-metrics">
+            <div><span>Критичных</span><strong id="criticalCount">0</strong></div>
+            <div><span>Предупреждений</span><strong id="warningCount">0</strong></div>
+            <div><span>Быстрых побед</span><strong id="quickWinCount">0</strong></div>
+          </div>
+          <button class="button primary wide" id="runAuditSide">Проанализировать страницу</button>
+          <button class="button ghost wide" id="saveProject">Сохранить проект</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-report">
+      <div class="report-toolbar no-print"><div><h2>AI Search Readiness Report</h2><p id="reportSubtitle">Нет результатов</p></div><div><button class="button ghost" id="exportJson">JSON</button><button class="button ghost" id="exportCsv">CSV</button><button class="button primary" id="printReport">PDF / печать</button></div></div>
+      <section class="report-cover panel">
+        <div><span class="eyebrow">CiteReady Audit</span><h1 id="reportTitle">Новый аудит</h1><p id="reportUrl">—</p></div>
+        <div class="cover-score"><strong id="reportScore">—</strong><span>AI-readiness</span></div>
+      </section>
+      <div class="category-grid" id="categoryGrid"></div>
+      <div class="report-grid">
+        <section class="panel"><div class="panel-head"><div><span class="step">03</span><h2>Приоритетные проблемы</h2></div></div><div id="issuesList" class="issues"><div class="empty">Запустите аудит</div></div></section>
+        <section class="panel"><div class="panel-head"><div><span class="step">04</span><h2>План исправлений</h2></div></div><div id="actionPlan" class="actions"><div class="empty">План появится после аудита</div></div></section>
+      </div>
+      <section class="panel"><div class="panel-head"><div><span class="step">05</span><h2>Извлечённые сигналы</h2></div></div><div class="signal-grid" id="signalsGrid"></div></section>
+      <footer class="report-footer"><span id="reportBrand">CiteReady</span><span>Автоматический диагностический отчёт. Не гарантирует попадание в AI-ответы.</span></footer>
+    </section>
+
+    <section class="tab-panel" id="tab-generators">
+      <div class="generator-grid">
+        <section class="panel"><div class="panel-head"><div><span class="step">A</span><h2>FAQ Schema</h2></div><button class="text-button copy-btn" data-copy="faqOutput">Копировать</button></div><p class="muted">JSON-LD на основе вопросов и заголовков страницы.</p><textarea id="faqOutput" rows="18" readonly></textarea></section>
+        <section class="panel"><div class="panel-head"><div><span class="step">B</span><h2>llms.txt</h2></div><button class="text-button copy-btn" data-copy="llmsOutput">Копировать</button></div><p class="muted">Черновик файла с ключевой информацией о странице и сайте.</p><textarea id="llmsOutput" rows="18" readonly></textarea></section>
+        <section class="panel"><div class="panel-head"><div><span class="step">C</span><h2>Answer blocks</h2></div><button class="text-button copy-btn" data-copy="answersOutput">Копировать</button></div><p class="muted">Готовые короткие блоки для улучшения ответности контента.</p><textarea id="answersOutput" rows="18" readonly></textarea></section>
+        <section class="panel"><div class="panel-head"><div><span class="step">D</span><h2>Content brief</h2></div><button class="text-button copy-btn" data-copy="briefOutput">Копировать</button></div><p class="muted">Техническое задание редактору или SEO-специалисту.</p><textarea id="briefOutput" rows="18" readonly></textarea></section>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-projects">
+      <div class="projects-toolbar"><div><h2>Сохранённые аудиты</h2><p class="muted">До 30 проектов в локальном хранилище браузера.</p></div><button class="button ghost" id="exportAll">Экспорт всех</button></div>
+      <div class="projects-grid" id="projectsGrid"><div class="empty panel">Сохранённых проектов пока нет</div></div>
+    </section>
+
+    <section class="tab-panel" id="tab-settings">
+      <div class="settings-grid">
+        <section class="panel"><div class="panel-head"><div><span class="step">W</span><h2>White-label настройки</h2></div></div><label>Название агентства<input id="agencyName" value="CiteReady Studio"></label><label>Контакт<input id="agencyContact" value="audit@example.com"></label><label>Акцентный цвет<input id="accentColor" type="color" value="#7cff9b"></label><label>Текст в подвале отчёта<textarea id="footerText" rows="3">Подготовлено для внутреннего использования и планирования улучшений.</textarea></label><button class="button primary" id="applyBrand">Применить брендирование</button></section>
+        <section class="panel brand-preview"><span class="eyebrow">Предпросмотр отчёта</span><h2 id="previewAgency">CiteReady Studio</h2><p id="previewContact">audit@example.com</p><div class="preview-card"><strong>84</strong><span>AI-readiness</span></div><p id="previewFooter">Подготовлено для внутреннего использования и планирования улучшений.</p></section>
+        <section class="panel" style="grid-column:1/-1"><h2>Коммерческие сценарии</h2><div class="commercial-grid"><article><b>SEO-аудит как услуга</b><p>Агентство проводит диагностику и продаёт внедрение рекомендаций.</p></article><article><b>Лид-магнит студии</b><p>Бесплатный экспресс-аудит приводит клиентов на разработку и SEO.</p></article><article><b>White-label SaaS</b><p>Сервис публикуется под брендом консультанта или агентства.</p></article><article><b>Внутренний QA</b><p>Редакторы проверяют страницы перед публикацией.</p></article></div></section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <footer class="page-footer no-print"><span>CiteReady 1.0 · local-first</span><span>Метрики являются диагностическими и не гарантируют цитирование.</span></footer>
+  <script src="https://cdn.jsdelivr.net/gh/uldwinter/genetihk@citeready/app.js"></script>
+</body>
+</html>
